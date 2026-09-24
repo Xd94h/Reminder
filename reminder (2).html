@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Remind — your gold-standard reminders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0908;
+    --bg-2:#121110;
+    --card:#161412;
+    --gold:#d4af37;
+    --gold-soft:#c9a227;
+    --gold-bright:#f2d675;
+    --cream:#ece3cf;
+    --muted:#9a917f;
+    --danger:#b5484f;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 20% -10%, rgba(212,175,55,0.08), transparent 45%),
+      radial-gradient(circle at 100% 110%, rgba(212,175,55,0.06), transparent 40%),
+      var(--bg);
+    color:var(--cream);
+    font-family:'Inter',sans-serif;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  .wrap{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+  }
+  .brand{
+    font-family:'Cormorant Garamond',serif;
+    letter-spacing:0.02em;
+  }
+
+  /* ---------- Name screen ---------- */
+  .name-card{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+  }
+  .name-card .eyebrow{
+    color:var(--gold-soft);
+    font-size:13px;
+    margin-bottom:10px;
+  }
+  .name-card h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:44px;
+    line-height:1.05;
+    margin:0 0 12px;
+    color:var(--gold-bright);
+    text-shadow:0 0 18px rgba(212,175,55,0.35);
+  }
+  .name-card p{
+    color:var(--muted);
+    font-size:15px;
+    margin:0 0 32px;
+  }
+  input[type="text"], input[type="datetime-local"]{
+    width:100%;
+    background:var(--bg-2);
+    border:1px solid #2b2621;
+    color:var(--cream);
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding:14px 16px;
+    border-radius:10px;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(212,175,55,0.15), 0 0 14px rgba(212,175,55,0.25);
+  }
+  .gold-btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:#161412;
+    background:linear-gradient(180deg, var(--gold-bright), var(--gold-soft));
+    border:none;
+    border-radius:10px;
+    padding:14px 22px;
+    cursor:pointer;
+    box-shadow:0 0 0 rgba(212,175,55,0), 0 6px 18px rgba(0,0,0,0.4);
+    transition:transform .15s ease, box-shadow .25s ease;
+  }
+  .gold-btn:hover{
+    box-shadow:0 0 22px rgba(212,175,55,0.55), 0 8px 22px rgba(0,0,0,0.45);
+    transform:translateY(-1px);
+  }
+  .gold-btn:active{transform:translateY(0);}
+  .name-card form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    margin-top:8px;
+  }
+
+  /* ---------- Home screen ---------- */
+  .home{
+    width:100%;
+    max-width:560px;
+  }
+  .home-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:28px;
+    gap:12px;
+  }
+  .home-header h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:38px;
+    margin:0;
+    color:var(--gold-bright);
+    text-shadow:0 0 16px rgba(212,175,55,0.3);
+  }
+  .home-header .sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:6px;
+  }
+  .icon-btn{
+    background:var(--bg-2);
+    border:1px solid #2b2621;
+    color:var(--gold);
+    width:38px;height:38px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:16px;
+    display:flex;align-items:center;justify-content:center;
+    transition:box-shadow .2s, border-color .2s;
+    flex-shrink:0;
+  }
+  .icon-btn:hover{
+    border-color:var(--gold);
+    box-shadow:0 0 12px rgba(212,175,55,0.4);
+  }
+
+  .notify-banner{
+    display:none;
+    background:var(--card);
+    border:1px solid #2b2621;
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:20px;
+    font-size:13.5px;
+    color:var(--muted);
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .notify-banner.show{display:flex;}
+  .notify-banner button{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    color:var(--bg);
+    background:var(--gold);
+    border:none;
+    border-radius:8px;
+    padding:8px 14px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:box-shadow .2s;
+  }
+  .notify-banner button:hover{box-shadow:0 0 12px rgba(212,175,55,0.5);}
+
+  .add-row{
+    margin-bottom:22px;
+  }
+  .add-btn{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:var(--card);
+    border:1px dashed rgba(212,175,55,0.5);
+    color:var(--gold);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    padding:15px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:box-shadow .2s, border-color .2s, background .2s;
+  }
+  .add-btn:hover{
+    border-color:var(--gold);
+    box-shadow:0 0 18px rgba(212,175,55,0.3);
+    background:#1a1713;
+  }
+  .add-btn .plus{font-size:18px;line-height:1;}
+
+  .add-form{
+    display:none;
+    flex-direction:column;
+    gap:14px;
+    background:var(--card);
+    border:1px solid #2b2621;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:22px;
+    box-shadow:0 0 24px rgba(212,175,55,0.08);
+  }
+  .add-form.show{display:flex;}
+  .add-form label{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+    display:block;
+  }
+  .add-form .field{display:flex;flex-direction:column;}
+  .add-form .row{display:flex;gap:12px;}
+  .add-form .row > *{flex:1;}
+  .form-actions{
+    display:flex;
+    gap:10px;
+    margin-top:4px;
+  }
+  .ghost-btn{
+    flex:1;
+    background:transparent;
+    border:1px solid #2b2621;
+    color:var(--muted);
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    padding:12px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:border-color .2s, color .2s;
+  }
+  .ghost-btn:hover{border-color:var(--gold); color:var(--cream);}
+  .form-actions .gold-btn{flex:1; text-align:center;}
+
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .reminder{
+    background:var(--card);
+    border:1px solid #2b2621;
+    border-radius:12px;
+    padding:16px 18px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:box-shadow .2s, border-color .2s;
+  }
+  .reminder.due{
+    border-color:var(--gold);
+    box-shadow:0 0 20px rgba(212,175,55,0.35);
+  }
+  .reminder-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+  }
+  .reminder .text{
+    font-size:15px;
+    color:var(--cream);
+    margin:0 0 4px;
+    word-break:break-word;
+  }
+  .reminder .time{
+    font-size:12.5px;
+    color:var(--gold-soft);
+  }
+  .reminder .badge{
+    display:inline-block;
+    font-size:10.5px;
+    font-weight:600;
+    color:var(--bg);
+    background:var(--gold);
+    padding:2px 7px;
+    border-radius:5px;
+    margin-bottom:5px;
+    letter-spacing:0.02em;
+  }
+  .reminder .del{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-size:18px;
+    cursor:pointer;
+    line-height:1;
+    padding:4px;
+    flex-shrink:0;
+    transition:color .2s;
+  }
+  .reminder .del:hover{color:var(--danger);}
+
+  .snooze-label{
+    font-size:11.5px;
+    color:var(--muted);
+  }
+  .snooze-row{
+    display:flex;
+    gap:8px;
+  }
+  .snooze-btn{
+    flex:1;
+    background:var(--bg-2);
+    border:1px solid rgba(212,175,55,0.45);
+    color:var(--gold);
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:10px 4px;
+    border-radius:9px;
+    cursor:pointer;
+    text-align:center;
+    transition:box-shadow .2s, border-color .2s, transform .15s;
+  }
+  .snooze-btn:hover{
+    border-color:var(--gold);
+    box-shadow:0 0 14px rgba(212,175,55,0.45);
+    transform:translateY(-1px);
+  }
+  .snooze-btn:active{transform:translateY(0);}
+
+  /* ---------- Full-screen popup ---------- */
+  .popup-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(6,5,4,0.9);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    padding-top:calc(24px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
+    z-index:1000;
+  }
+  .popup-overlay.show{display:flex;}
+  .popup-card{
+    width:100%;
+    max-width:400px;
+    background:var(--card);
+    border:1px solid var(--gold);
+    border-radius:18px;
+    padding:34px 26px;
+    text-align:center;
+    box-shadow:0 0 50px rgba(212,175,55,0.4), 0 20px 60px rgba(0,0,0,0.6);
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .popup-card{animation:popIn .25s ease both;}
+  }
+  @keyframes popIn{
+    from{opacity:0; transform:scale(.94);}
+    to{opacity:1; transform:scale(1);}
+  }
+  .popup-card .eyebrow{
+    color:var(--gold-soft);
+    font-size:12px;
+    margin-bottom:10px;
+  }
+  .popup-card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:28px;
+    color:var(--gold-bright);
+    margin:0 0 26px;
+    text-shadow:0 0 16px rgba(212,175,55,0.35);
+    word-break:break-word;
+    line-height:1.15;
+  }
+  .popup-card .gold-btn{width:100%; margin-bottom:20px;}
+  .popup-card .snooze-label{display:block; margin-bottom:10px;}
+
+  .empty{
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    padding:40px 10px;
+    border:1px dashed #2b2621;
+    border-radius:12px;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .reminder{animation:rise .35s ease both;}
+  }
+  @keyframes rise{
+    from{opacity:0; transform:translateY(6px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+</style>
+</head>
+<body>
+
+<div class="wrap" id="nameScreenWrap" style="display:none">
+  <div class="name-card" id="nameScreen">
+    <div class="eyebrow">Remind</div>
+    <h1>Who's this for?</h1>
+    <p>Tell us your name, and we'll keep watch over your time.</p>
+    <form id="nameForm">
+      <input type="text" id="nameInput" placeholder="Your name" autocomplete="off" required>
+      <button type="submit" class="gold-btn">Continue</button>
+    </form>
+  </div>
+</div>
+
+<div class="wrap" id="homeScreenWrap" style="display:none">
+  <div class="home" id="homeScreen">
+    <div class="home-header">
+      <div>
+        <h1 id="greeting"></h1>
+        <div class="sub" id="dateSub"></div>
+      </div>
+      <button class="icon-btn" id="changeNameBtn" title="Change name">✎</button>
+    </div>
+
+    <div class="notify-banner" id="notifyBanner">
+      <span>Turn on notifications so reminders can reach you.</span>
+      <button id="allowNotifyBtn">Allow</button>
+    </div>
+
+    <div class="add-row">
+      <button class="add-btn" id="showFormBtn"><span class="plus">+</span> Add reminder</button>
+    </div>
+
+    <form class="add-form" id="addForm">
+      <div class="field">
+        <label for="reminderText">What should we remind you of?</label>
+        <input type="text" id="reminderText" placeholder="e.g. Call the electrician" required>
+      </div>
+      <div class="field">
+        <label for="reminderTime">When</label>
+        <input type="datetime-local" id="reminderTime" required>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="ghost-btn" id="cancelFormBtn">Cancel</button>
+        <button type="submit" class="gold-btn">Save reminder</button>
+      </div>
+    </form>
+
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-card">
+    <div class="eyebrow">Reminder</div>
+    <h2 id="popupText"></h2>
+    <button class="gold-btn" id="popupCloseBtn">Close</button>
+    <span class="snooze-label">Remind me again after</span>
+    <div class="snooze-row" id="popupSnoozeRow"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const LS_NAME = 'remind_user_name';
+  const LS_REMINDERS = 'remind_reminders';
+
+  const nameScreenWrap = document.getElementById('nameScreenWrap');
+  const homeScreenWrap = document.getElementById('homeScreenWrap');
+  const nameForm = document.getElementById('nameForm');
+  const nameInput = document.getElementById('nameInput');
+  const greeting = document.getElementById('greeting');
+  const dateSub = document.getElementById('dateSub');
+  const changeNameBtn = document.getElementById('changeNameBtn');
+
+  const notifyBanner = document.getElementById('notifyBanner');
+  const allowNotifyBtn = document.getElementById('allowNotifyBtn');
+
+  const showFormBtn = document.getElementById('showFormBtn');
+  const addForm = document.getElementById('addForm');
+  const cancelFormBtn = document.getElementById('cancelFormBtn');
+  const reminderText = document.getElementById('reminderText');
+  const reminderTime = document.getElementById('reminderTime');
+  const list = document.getElementById('list');
+
+  const popupOverlay = document.getElementById('popupOverlay');
+  const popupTextEl = document.getElementById('popupText');
+  const popupCloseBtn = document.getElementById('popupCloseBtn');
+  const popupSnoozeRow = document.getElementById('popupSnoozeRow');
+
+  const SNOOZE_OPTIONS = [
+    { label:'2 mins', minutes:2 },
+    { label:'20 mins', minutes:20 },
+    { label:'2 hours', minutes:120 }
+  ];
+  let popupQueue = [];
+  let currentPopupId = null;
+
+  function safeGet(key){
+    try{ return localStorage.getItem(key); }catch(e){ return null; }
+  }
+  function safeSet(key, val){
+    try{ localStorage.setItem(key, val); }catch(e){}
+  }
+
+  function getReminders(){
+    try{
+      const raw = safeGet(LS_REMINDERS);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function saveReminders(arr){
+    safeSet(LS_REMINDERS, JSON.stringify(arr));
+  }
+
+  function fmtTime(iso){
+    const d = new Date(iso);
+    if(isNaN(d)) return '';
+    return d.toLocaleString(undefined, {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+  }
+
+  function render(){
+    const reminders = getReminders().sort((a,b)=> new Date(a.time) - new Date(b.time));
+    list.innerHTML = '';
+    if(reminders.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Nothing yet. Add your first reminder above.';
+      list.appendChild(empty);
+      return;
+    }
+    reminders.forEach(r=>{
+      const isDue = r.status === 'fired';
+      const item = document.createElement('div');
+      item.className = 'reminder' + (isDue ? ' due' : '');
+
+      const top = document.createElement('div');
+      top.className = 'reminder-top';
+      top.innerHTML = `
+        <div>
+          ${isDue ? '<span class="badge">Due now</span><br>' : ''}
+          <p class="text"></p>
+          <div class="time"></div>
+        </div>
+        <button class="del" title="Delete">✕</button>
+      `;
+      top.querySelector('.text').textContent = r.text;
+      top.querySelector('.time').textContent = fmtTime(r.time);
+      top.querySelector('.del').addEventListener('click', ()=>{
+        const all = getReminders().filter(x=>x.id !== r.id);
+        saveReminders(all);
+        popupQueue = popupQueue.filter(id=>id !== r.id);
+        if(currentPopupId === r.id) closePopup();
+        render();
+      });
+      item.appendChild(top);
+
+      if(isDue){
+        const label = document.createElement('span');
+        label.className = 'snooze-label';
+        label.textContent = 'Remind me again after';
+        item.appendChild(label);
+
+        const row = document.createElement('div');
+        row.className = 'snooze-row';
+        SNOOZE_OPTIONS.forEach(opt=>{
+          const btn = document.createElement('button');
+          btn.className = 'snooze-btn';
+          btn.type = 'button';
+          btn.textContent = opt.label;
+          btn.addEventListener('click', ()=> snooze(r.id, opt.minutes));
+          row.appendChild(btn);
+        });
+        item.appendChild(row);
+      }
+
+      list.appendChild(item);
+    });
+  }
+
+  function initHome(name){
+    greeting.textContent = `Hello, ${name}`;
+    dateSub.textContent = new Date().toLocaleDateString(undefined, {weekday:'long', month:'long', day:'numeric'});
+    nameScreenWrap.style.display = 'none';
+    homeScreenWrap.style.display = 'flex';
+    render();
+    setupNotifyBanner();
+  }
+
+  nameForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = nameInput.value.trim();
+    if(!name) return;
+    safeSet(LS_NAME, name);
+    initHome(name);
+  });
+
+  changeNameBtn.addEventListener('click', function(){
+    homeScreenWrap.style.display = 'none';
+    nameScreenWrap.style.display = 'flex';
+    nameInput.value = safeGet(LS_NAME) || '';
+    nameInput.focus();
+  });
+
+  showFormBtn.addEventListener('click', ()=>{
+    addForm.classList.add('show');
+    showFormBtn.style.display = 'none';
+    reminderText.focus();
+  });
+  function closeForm(){
+    addForm.classList.remove('show');
+    showFormBtn.style.display = 'flex';
+    addForm.reset();
+  }
+  cancelFormBtn.addEventListener('click', closeForm);
+
+  addForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const text = reminderText.value.trim();
+    const time = reminderTime.value;
+    if(!text || !time) return;
+    const all = getReminders();
+    all.push({ id: Date.now() + '_' + Math.random().toString(36).slice(2), text, time: new Date(time).toISOString(), status:'pending' });
+    saveReminders(all);
+    closeForm();
+    render();
+  });
+
+  // ---------- Notifications ----------
+  function setupNotifyBanner(){
+    if(!('Notification' in window)){
+      notifyBanner.classList.remove('show');
+      return;
+    }
+    if(Notification.permission === 'default'){
+      notifyBanner.classList.add('show');
+    } else {
+      notifyBanner.classList.remove('show');
+    }
+  }
+  allowNotifyBtn.addEventListener('click', function(){
+    if(!('Notification' in window)) return;
+    Notification.requestPermission().then(()=> setupNotifyBanner());
+  });
+
+  function checkDue(){
+    const reminders = getReminders();
+    const now = new Date();
+    let changed = false;
+    reminders.forEach(r=>{
+      if(r.status === 'pending' && new Date(r.time) <= now){
+        r.status = 'fired';
+        changed = true;
+        popupQueue.push(r.id);
+        try{
+          if('Notification' in window && Notification.permission === 'granted'){
+            new Notification('Reminder', { body: r.text });
+          }
+        }catch(e){}
+      }
+    });
+    if(changed){
+      saveReminders(reminders);
+      render();
+      showNextPopup();
+    }
+  }
+  setInterval(checkDue, 10000);
+
+  function showNextPopup(){
+    if(currentPopupId) return;
+    while(popupQueue.length){
+      const id = popupQueue.shift();
+      const r = getReminders().find(x=>x.id === id);
+      if(r && r.status === 'fired'){
+        currentPopupId = id;
+        popupTextEl.textContent = r.text;
+        popupSnoozeRow.innerHTML = '';
+        SNOOZE_OPTIONS.forEach(opt=>{
+          const btn = document.createElement('button');
+          btn.className = 'snooze-btn';
+          btn.type = 'button';
+          btn.textContent = opt.label;
+          btn.addEventListener('click', ()=> snooze(id, opt.minutes));
+          popupSnoozeRow.appendChild(btn);
+        });
+        popupOverlay.classList.add('show');
+        return;
+      }
+    }
+  }
+
+  function closePopup(){
+    popupOverlay.classList.remove('show');
+    currentPopupId = null;
+    setTimeout(showNextPopup, 300);
+  }
+  popupCloseBtn.addEventListener('click', closePopup);
+
+  function snooze(id, minutes){
+    const all = getReminders();
+    const r = all.find(x=>x.id === id);
+    if(!r) return;
+    r.time = new Date(Date.now() + minutes*60000).toISOString();
+    r.status = 'pending';
+    saveReminders(all);
+    popupQueue = popupQueue.filter(x=>x !== id);
+    render();
+    if(currentPopupId === id) closePopup();
+  }
+
+  // ---------- Boot ----------
+  const savedName = safeGet(LS_NAME);
+  if(savedName){
+    initHome(savedName);
+  } else {
+    nameScreenWrap.style.display = 'flex';
+  }
+  checkDue();
+})();
+</script>
+</body>
+</html>
